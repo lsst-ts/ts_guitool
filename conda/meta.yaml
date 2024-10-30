@@ -62,3 +62,4 @@ requirements:
     - pandas
     - pyside6
     - qt6-charts
+    - qasync
