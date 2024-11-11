@@ -1,0 +1,15 @@
+.. py:currentmodule:: lsst.ts.guitool
+
+.. _lsst.ts.guitool-version_history:
+
+##################
+Version History
+##################
+
+.. _lsst.ts.guitool-0.1.0:
+
+-------------
+0.1.0
+-------------
+
+* Migrate the reusable functions from **ts_m2gui**.
