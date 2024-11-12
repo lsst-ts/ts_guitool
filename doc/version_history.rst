@@ -6,6 +6,14 @@
 Version History
 ##################
 
+.. _lsst.ts.guitool-0.2.0:
+
+-------------
+0.2.0
+-------------
+
+* Migrate the ``ControlTabs`` and ``TabDefault`` classes from **ts_m2gui**.
+
 .. _lsst.ts.guitool-0.1.0:
 
 -------------

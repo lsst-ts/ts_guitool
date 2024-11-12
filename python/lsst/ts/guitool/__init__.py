@@ -29,6 +29,7 @@ else:
     except ImportError:
         __version__ = "?"
 
+from .constants import *
 from .display import *
 from .utils import *
 from .widget import *
