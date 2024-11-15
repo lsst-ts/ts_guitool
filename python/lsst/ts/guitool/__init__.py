@@ -1,6 +1,6 @@
 # This file is part of ts_guitool.
 #
-# Developed for the LSST Telescope and Site Systems.
+# Developed for the Vera Rubin Observatory Systems.
 # This product includes software developed by the LSST Project
 # (https://www.lsst.org).
 # See the COPYRIGHT file at the top-level directory of this distribution
@@ -29,6 +29,7 @@ else:
     except ImportError:
         __version__ = "?"
 
+from .constants import *
 from .display import *
 from .utils import *
 from .widget import *

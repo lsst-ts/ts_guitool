@@ -19,5 +19,31 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-from .figure_constant import *
-from .gauge import *
+__all__ = [
+    "PORT_MINIMUM",
+    "PORT_MAXIMUM",
+    "TIMEOUT_MINIMUM",
+    "LOG_LEVEL_MINIMUM",
+    "LOG_LEVEL_MAXIMUM",
+    "REFRESH_FREQUENCY_MINIMUM",
+    "REFRESH_FREQUENCY_MAXIMUM",
+    "POINT_SIZE_MINIMUM",
+    "POINT_SIZE_MAXIMUM",
+]
+
+
+PORT_MINIMUM = 1
+PORT_MAXIMUM = 65535
+
+# In second
+TIMEOUT_MINIMUM = 1
+
+LOG_LEVEL_MINIMUM = 10
+LOG_LEVEL_MAXIMUM = 50
+
+# In Hz
+REFRESH_FREQUENCY_MINIMUM = 1
+REFRESH_FREQUENCY_MAXIMUM = 20
+
+POINT_SIZE_MINIMUM = 9
+POINT_SIZE_MAXIMUM = 14
