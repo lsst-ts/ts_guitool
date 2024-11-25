@@ -19,18 +19,16 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-import typing
+__all__ = ["ButtonStatus"]
 
-if typing.TYPE_CHECKING:
-    __version__ = "?"
-else:
-    try:
-        from .version import *
-    except ImportError:
-        __version__ = "?"
 
-from .constants import *
-from .display import *
-from .enums import *
-from .utils import *
-from .widget import *
+from enum import IntEnum, auto
+
+
+class ButtonStatus(IntEnum):
+    """Button status."""
+
+    Default = 1
+    Normal = auto()
+    Error = auto()
+    Warn = auto()

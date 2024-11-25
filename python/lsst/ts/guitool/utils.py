@@ -23,6 +23,9 @@ __all__ = [
     "is_coroutine",
     "set_button",
     "create_grid_layout_buttons",
+    "create_radio_indicators",
+    "update_button_color",
+    "create_double_spin_box",
     "create_label",
     "create_group_box",
     "create_table",
@@ -46,14 +49,17 @@ from PySide6 import QtWidgets
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QAction, QPalette
 from PySide6.QtWidgets import (
+    QDoubleSpinBox,
     QGridLayout,
     QGroupBox,
     QLabel,
     QPushButton,
+    QRadioButton,
     QTableWidget,
     QToolBar,
 )
 
+from .enums import ButtonStatus
 from .widget import QMessageBoxAsync
 
 
@@ -173,6 +179,111 @@ def create_grid_layout_buttons(
             row += 1
 
     return layout
+
+
+def create_radio_indicators(number: int) -> list[QRadioButton]:
+    """Create the radio button indicators.
+
+    Parameters
+    ----------
+    number : `int`
+        Number of the radio button indicator.
+
+    Returns
+    -------
+    indicators : `list` [`QRadioButton`]
+        Radio button indicators.
+    """
+
+    indicators = list()
+    for _ in range(number):
+        indicator = QRadioButton()
+        indicator.setEnabled(False)
+
+        indicators.append(indicator)
+
+    return indicators
+
+
+def update_button_color(
+    button: QPushButton | QRadioButton,
+    role: QPalette.ColorRole,
+    status: ButtonStatus,
+) -> None:
+    """Update the button color.
+
+    Parameters
+    ----------
+    button : `QPushButton` or `QRadioButton`
+        Button.
+    role: `QPalette.ColorRole`
+        Role of the color.
+    status : `ButtonStatus`
+        Status.
+    """
+
+    # Decide the color
+    if status == ButtonStatus.Normal:
+        color = Qt.green
+    elif status == ButtonStatus.Error:
+        color = Qt.red
+    elif status == ButtonStatus.Warn:
+        color = Qt.yellow
+    else:
+        color = Qt.gray
+
+    # Update the palette
+    palette = button.palette()
+    palette.setColor(role, color)
+    button.setPalette(palette)
+
+
+def create_double_spin_box(
+    suffix: str,
+    decimal: int,
+    maximum: float | None = None,
+    minimum: float | None = None,
+    tool_tip: str | None = None,
+) -> QDoubleSpinBox:
+    """Create the double spin box.
+
+    Parameters
+    ----------
+    suffix : `str`
+        Suffix. Usually it is the unit of the value. Put the empty string if
+        you do not want to have a suffix.
+    decimal : `int`
+        Decimal.
+    maximum : `float` or None, optional
+        Maximum value. (the default is None)
+    minimum : `float` or None, optional
+        Minimum value. (the default is None)
+    tool_tip : `str` or None, optional
+        Tool tip. (the default is None)
+
+    Returns
+    -------
+    spin_box : `QDoubleSpinBox`
+        Double spin box.
+    """
+
+    spin_box = QDoubleSpinBox()
+    spin_box.setDecimals(decimal)
+    spin_box.setSingleStep(get_tol(decimal))
+
+    if suffix != "":
+        spin_box.setSuffix(f" {suffix}")
+
+    if maximum is not None:
+        spin_box.setMaximum(maximum)
+
+    if minimum is not None:
+        spin_box.setMinimum(minimum)
+
+    if tool_tip is not None:
+        spin_box.setToolTip(tool_tip)
+
+    return spin_box
 
 
 def create_label(
