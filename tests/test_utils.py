@@ -22,7 +22,10 @@
 import asyncio
 
 import pytest
-from lsst.ts.guitool import get_tol, run_command
+from lsst.ts.guitool import ButtonStatus, get_tol, run_command, update_button_color
+from PySide6.QtCore import Qt
+from PySide6.QtGui import QPalette
+from PySide6.QtWidgets import QRadioButton
 from pytestqt.qtbot import QtBot
 
 
@@ -53,3 +56,14 @@ async def test_run_command(qtbot: QtBot) -> None:
 
     assert await run_command(command_coroutine, False) is True
     assert await run_command(command_coroutine, True, is_prompted=False) is False
+
+
+def test_update_button_color() -> None:
+
+    button = QRadioButton()
+
+    colors = [Qt.gray, Qt.green, Qt.red, Qt.yellow]
+    for status, color in zip(ButtonStatus, colors):
+        update_button_color(button, QPalette.Base, status)
+
+        assert button.palette().color(QPalette.Base) == color

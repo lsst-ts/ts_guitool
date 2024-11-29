@@ -6,6 +6,14 @@
 Version History
 ##################
 
+.. _lsst.ts.guitool-0.2.1:
+
+-------------
+0.2.1
+-------------
+
+* Add the ``create_radio_indicators()``, ``update_button_color()``, and ``create_double_spin_box()``.
+
 .. _lsst.ts.guitool-0.2.0:
 
 -------------
