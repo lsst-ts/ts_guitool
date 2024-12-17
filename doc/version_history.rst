@@ -6,6 +6,14 @@
 Version History
 ##################
 
+.. _lsst.ts.guitool-0.2.2:
+
+-------------
+0.2.2
+-------------
+
+* Add the ``read_yaml_file()``, ``get_config_dir()``, and ``update_boolean_indicator_status()``.
+
 .. _lsst.ts.guitool-0.2.1:
 
 -------------

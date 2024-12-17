@@ -20,6 +20,8 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 __all__ = [
+    "read_yaml_file",
+    "get_config_dir",
     "is_coroutine",
     "set_button",
     "create_grid_layout_buttons",
@@ -36,6 +38,7 @@ __all__ = [
     "get_button_action",
     "get_checked_buttons",
     "base_frame_run_application",
+    "update_boolean_indicator_status",
 ]
 
 import asyncio
@@ -43,8 +46,11 @@ import os
 import sys
 import typing
 from functools import partial
+from os import getenv
+from pathlib import Path
 
 import qasync
+import yaml
 from PySide6 import QtWidgets
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QAction, QPalette
@@ -61,6 +67,57 @@ from PySide6.QtWidgets import (
 
 from .enums import ButtonStatus
 from .widget import QMessageBoxAsync
+
+
+def read_yaml_file(filepath: str | Path) -> dict:
+    """Read the yaml file.
+
+    Parameters
+    ----------
+    filepath : `str` or `pathlib.PosixPath`
+        Yaml file path.
+
+    Returns
+    -------
+    content : `dict`
+        File content.
+
+    Raises
+    ------
+    `IOError`
+        Cannot open the file.
+    """
+
+    content = dict()
+    try:
+        with open(filepath, "r") as yaml_file:
+            content = yaml.safe_load(yaml_file)
+    except IOError:
+        raise IOError(f"Cannot open the yaml file: {filepath}.")
+
+    return content
+
+
+def get_config_dir(
+    relative_path: str,
+    env_variable: str = "TS_CONFIG_MTTCS_DIR",
+) -> Path:
+    """Get the directory of configuration files.
+
+    Parameters
+    ----------
+    relative_path : `str`
+        Relative path to the path assigned by "env_variable".
+    env_variable : `str`, optional
+        Environment variable of "ts_config_mttcs". (the default is
+        "TS_CONFIG_MTTCS_DIR")
+
+    Returns
+    -------
+    `pathlib.PosixPath`
+        Path of the configuration directory.
+    """
+    return Path(getenv(env_variable, default="")) / relative_path
 
 
 def is_coroutine(function: typing.Any) -> bool:
@@ -595,3 +652,49 @@ def base_frame_run_application(main: typing.Coroutine) -> None:
             qasync.run(main(sys.argv))  # type: ignore[operator]
         except asyncio.exceptions.CancelledError:
             sys.exit(0)
+
+
+def update_boolean_indicator_status(
+    indicator: QRadioButton,
+    is_triggered: bool,
+    is_fault: bool = False,
+    is_warning: bool = False,
+    is_default_error: bool = False,
+) -> None:
+    """Update the boolean indicator status.
+
+    Parameters
+    ----------
+    indicator : `QRadioButton`
+        Indicator.
+    is_triggered : `bool`
+        Is triggered or not.
+    is_fault : `bool`, optional
+        Is fault or not. (the default is False)
+    is_warning : `bool`, optional
+        Is warning or not. (the default is False)
+    is_default_error : `bool`, optional
+        By default, the indicator is in error or not. (the default is False)
+
+    Raises
+    ------
+    `ValueError`
+        When the indicator is both fault and warning.
+    """
+
+    if is_fault and is_warning:
+        raise ValueError("Cannot be both fault and warning.")
+
+    if is_fault:
+        status_triggered = ButtonStatus.Error
+    elif is_warning:
+        status_triggered = ButtonStatus.Warn
+    else:
+        status_triggered = ButtonStatus.Normal
+
+    status_not_triggered = (
+        ButtonStatus.Error if is_default_error else ButtonStatus.Default
+    )
+
+    status = status_triggered if is_triggered else status_not_triggered
+    update_button_color(indicator, QPalette.Base, status)
