@@ -22,7 +22,15 @@
 import asyncio
 
 import pytest
-from lsst.ts.guitool import ButtonStatus, get_tol, run_command, update_button_color
+from lsst.ts.guitool import (
+    ButtonStatus,
+    get_config_dir,
+    get_tol,
+    read_yaml_file,
+    run_command,
+    update_boolean_indicator_status,
+    update_button_color,
+)
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QPalette
 from PySide6.QtWidgets import QRadioButton
@@ -39,6 +47,25 @@ async def command_coroutine(is_failed: bool) -> None:
 
     if is_failed:
         raise RuntimeError("Command is failed.")
+
+
+def test_read_yaml_file_exception() -> None:
+    with pytest.raises(IOError):
+        read_yaml_file("no_this_yaml_file.yaml")
+
+
+def test_read_yaml_file() -> None:
+    yaml_file = get_config_dir("MTRotator/v2") / "default_gui.yaml"
+    content = read_yaml_file(yaml_file)
+
+    assert content["port"] == 5570
+
+
+def test_get_config_dir() -> None:
+    path = get_config_dir("MTRotator/v2")
+
+    assert path.exists()
+    assert path.name == "v2"
 
 
 def test_get_tol() -> None:
@@ -67,3 +94,29 @@ def test_update_button_color() -> None:
         update_button_color(button, QPalette.Base, status)
 
         assert button.palette().color(QPalette.Base) == color
+
+
+def test_update_boolean_indicator_status() -> None:
+
+    button = QRadioButton()
+
+    # Error
+    with pytest.raises(ValueError):
+        update_boolean_indicator_status(button, False, is_fault=True, is_warning=True)
+
+    # Not triggered
+    update_boolean_indicator_status(button, False)
+    assert button.palette().color(QPalette.Base) == Qt.gray
+
+    update_boolean_indicator_status(button, False, is_default_error=True)
+    assert button.palette().color(QPalette.Base) == Qt.red
+
+    # Triggered
+    update_boolean_indicator_status(button, True)
+    assert button.palette().color(QPalette.Base) == Qt.green
+
+    update_boolean_indicator_status(button, True, is_fault=True)
+    assert button.palette().color(QPalette.Base) == Qt.red
+
+    update_boolean_indicator_status(button, True, is_warning=True)
+    assert button.palette().color(QPalette.Base) == Qt.yellow
