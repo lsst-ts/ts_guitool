@@ -6,6 +6,14 @@
 Version History
 ##################
 
+.. _lsst.ts.guitool-0.2.3:
+
+-------------
+0.2.3
+-------------
+
+* Fix the **Jenkinsfile.conda**.
+
 .. _lsst.ts.guitool-0.2.2:
 
 -------------

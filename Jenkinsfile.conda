@@ -1,2 +1,2 @@
 @Library('JenkinsShared')_
-CondaPipeline([], "ts-guitool", "lsst.ts.guitool", "noarch")
+CondaPipeline(["ts_config_mttcs"], "ts-guitool", "lsst.ts.guitool", "noarch")
