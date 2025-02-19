@@ -6,6 +6,14 @@
 Version History
 ##################
 
+.. _lsst.ts.guitool-0.2.4:
+
+-------------
+0.2.4
+-------------
+
+* Remove the **ts_idl**.
+
 .. _lsst.ts.guitool-0.2.3:
 
 -------------
