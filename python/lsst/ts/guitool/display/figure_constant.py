@@ -267,9 +267,38 @@ class FigureConstant(QtCharts.QChartView):
         # Check the range of y-axis needs to be updated or not
         self._value_y_min = min(self._value_y_min, *list_y)
         self._value_y_max = max(self._value_y_max, *list_y)
-        self._update_range_axis_y()
 
-    def _update_range_axis_y(self, threshold: float | int = 50) -> None:
+        threshold, offset = self._calculate_threshold_and_offset()
+        self._update_range_axis_y(threshold=threshold, offset=offset)
+
+    def _calculate_threshold_and_offset(
+        self, parameter_threshold: float = 2.0, parameter_offset: float = 10.0
+    ) -> (float, float):
+        """Calculate the threshold and offset for the y-axis.
+
+        Parameters
+        ----------
+        parameter_threshold : `float`, optional
+            Parameter to calculate the threshold. (the default is 2.0)
+        parameter_offset : `float`, optional
+            Parameter to calculate the offset. (the default is 10.0)
+        
+        Returns
+        -------
+        `float`
+            Threshold.
+        `float`
+            Offset.
+        """
+
+        difference = self._value_y_max - self._value_y_min
+        offset = difference / parameter_offset if difference != 0.0 else self.OFFSET_Y
+
+        return parameter_threshold * offset, offset
+
+    def _update_range_axis_y(
+            self, threshold: float | int = 50, offset: float | int | None =  None
+    ) -> None:
         """Update the range of y-axis.
 
         This is used internally to track the incoming data and update the range
@@ -279,10 +308,15 @@ class FigureConstant(QtCharts.QChartView):
         ----------
         threshold : `float` or `int`, optional
             Threshold to decide the update of range. (the default is 50)
+        offset : `float` or `int` or `None`, optional
+            Offset of the figure. If None, the default offset will be used. (
+            the default is None)
         """
 
         axis_max = self.axis_y.max()
         axis_min = self.axis_y.min()
+
+        offset_figure = self.OFFSET_Y if (offset is None) else offset
 
         if (
             (self._value_y_min < axis_min)
@@ -291,10 +325,12 @@ class FigureConstant(QtCharts.QChartView):
             or (abs(self._value_y_max - axis_max) > threshold)
         ):
             self.axis_y.setRange(
-                self._value_y_min - self.OFFSET_Y, self._value_y_max + self.OFFSET_Y
+                self._value_y_min - offset_figure, self._value_y_max + offset_figure
             )
 
-    def adjust_range_axis_y(self, threshold: float | int = 1) -> None:
+    def adjust_range_axis_y(
+        self, threshold: float | int = 1, offset: float | int | None =  None
+    ) -> None:
         """Adjust the range of y-axis.
 
         This is different from the self._update_range_axis_y(). Sometimes, it
@@ -305,6 +341,9 @@ class FigureConstant(QtCharts.QChartView):
         ----------
         threshold : `float` or `int`, optional
             Threshold to decide the update of range. (the default is 1)
+        offset : `float` or `int` or `None`, optional
+            Offset of the figure. If None, the default offset will be used. (
+            the default is None)
         """
 
         num_series = len(self.chart().series())
@@ -317,7 +356,7 @@ class FigureConstant(QtCharts.QChartView):
 
         self._value_y_min = min(values)
         self._value_y_max = max(values)
-        self._update_range_axis_y(threshold=threshold)
+        self._update_range_axis_y(threshold=threshold, offset=offset)
 
     def _get_range_points(self, idx: int) -> tuple[float, float]:
         """Get the range of points in a specific series.
@@ -377,15 +416,17 @@ class FigureConstant(QtCharts.QChartView):
         # Check the range of y-axis needs to be updated or not
         self._value_y_max = max(self._value_y_max, value)
         self._value_y_min = min(self._value_y_min, value)
-        self._update_range_axis_y()
+
+        threshold, offset = self._calculate_threshold_and_offset()
+        self._update_range_axis_y(threshold=threshold, offset=offset)
 
         # Update the counter
         self._counter_realtime += 1
-        if self._counter_realtime >= self._max_counter_realtime:
+        if self._counter_realtime >= (self._max_counter_realtime / 2):
             self._counter_realtime = 0
 
             # Adjust the range of y-axis if needed
-            self.adjust_range_axis_y(threshold=5)
+            self.adjust_range_axis_y(threshold=threshold, offset=offset)
 
     def _append_point(self, points: list[QPointF], value: float) -> None:
         """Append the point.
