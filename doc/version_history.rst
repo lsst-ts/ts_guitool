@@ -6,6 +6,14 @@
 Version History
 ##################
 
+.. _lsst.ts.guitool-0.2.5:
+
+-------------
+0.2.5
+-------------
+
+* Improve the ``figure_constant.py`` for the adjustment of y-axis automatically.
+
 .. _lsst.ts.guitool-0.2.4:
 
 -------------

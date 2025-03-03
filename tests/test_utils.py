@@ -58,7 +58,7 @@ def test_read_yaml_file() -> None:
     yaml_file = get_config_dir("MTRotator/v2") / "default_gui.yaml"
     content = read_yaml_file(yaml_file)
 
-    assert content["port"] == 5570
+    assert content["port"] == 5580
 
 
 def test_get_config_dir() -> None:

@@ -79,29 +79,29 @@ def test_update_range_axis_y(widget: FigureConstant) -> None:
     widget._value_y_min = -100
     widget._update_range_axis_y()
 
-    assert widget.axis_y.min() == -101
-    assert widget.axis_y.max() == 1
+    assert widget.axis_y.min() == -110.0
+    assert widget.axis_y.max() == 10.0
 
     # The new maximum is bigger than the axis
     widget._value_y_max = 100
     widget._update_range_axis_y()
 
-    assert widget.axis_y.min() == -101
-    assert widget.axis_y.max() == 101
+    assert widget.axis_y.min() == -120.0
+    assert widget.axis_y.max() == 120.0
 
     # The "minimum" difference between the axis and values are big
     widget._value_y_min = -10
     widget._update_range_axis_y()
 
-    assert widget.axis_y.min() == -11
-    assert widget.axis_y.max() == 101
+    assert widget.axis_y.min() == -21.0
+    assert widget.axis_y.max() == 111.0
 
     # The "maximum" difference between the axis and values are big
     widget._value_y_max = 10
     widget._update_range_axis_y()
 
-    assert widget.axis_y.min() == -11
-    assert widget.axis_y.max() == 11
+    assert widget.axis_y.min() == -12.0
+    assert widget.axis_y.max() == 12.0
 
 
 def test_update_data_exception(widget: FigureConstant) -> None:
@@ -121,8 +121,8 @@ def test_update_data(widget: FigureConstant) -> None:
         assert point.x() == x
         assert point.y() == y
 
-    assert widget.axis_y.min() == -1
-    assert widget.axis_y.max() == 13
+    assert widget.axis_y.min() == -1.2
+    assert widget.axis_y.max() == 13.2
 
     # Update the second series
     data_y_1 = range(-8, 2)
@@ -132,8 +132,8 @@ def test_update_data(widget: FigureConstant) -> None:
         assert point.x() == x
         assert point.y() == y
 
-    assert widget.axis_y.min() == -9
-    assert widget.axis_y.max() == 13
+    assert widget.axis_y.min() == -10.0
+    assert widget.axis_y.max() == 14.0
 
 
 def test_adjust_range_axis_y(widget: FigureConstant) -> None:
@@ -146,11 +146,11 @@ def test_adjust_range_axis_y(widget: FigureConstant) -> None:
 
     widget.adjust_range_axis_y()
 
-    assert widget._value_y_min == -13
-    assert widget._value_y_max == 12
+    assert widget._value_y_min == -13.0
+    assert widget._value_y_max == 12.0
 
-    assert widget.axis_y.min() == -14
-    assert widget.axis_y.max() == 13
+    assert widget.axis_y.min() == -15.5
+    assert widget.axis_y.max() == 14.5
 
 
 def test_get_range_points(widget: FigureConstant) -> None:
