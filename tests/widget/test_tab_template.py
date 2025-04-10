@@ -48,14 +48,18 @@ def test_set_widget_scrollable(widget: TabTemplate) -> None:
 
 def test_create_and_start_timer(widget: TabTemplate) -> None:
     duration = 100
-    timer = widget.create_and_start_timer(None, duration)
+    timer = widget.create_and_start_timer(_callback_time_out, duration)
 
     assert timer.interval() == duration
     assert timer.isActive() is True
 
 
+def _callback_time_out() -> None:
+    pass
+
+
 def test_check_duration_and_restart_timer(widget: TabTemplate) -> None:
-    timer = widget.create_and_start_timer(None, 100)
+    timer = widget.create_and_start_timer(_callback_time_out, 100)
 
     duration = 1000
     widget.check_duration_and_restart_timer(timer, duration)
