@@ -6,6 +6,14 @@
 Version History
 ##################
 
+.. _lsst.ts.guitool-0.2.7:
+
+-------------
+0.2.7
+-------------
+
+* Add the **QT_QPA_PLATFORM** to ``meta.yaml`` to fix the test section of conda recipe.
+
 .. _lsst.ts.guitool-0.2.6:
 
 -------------
