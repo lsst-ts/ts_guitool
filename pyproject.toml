@@ -1,5 +1,5 @@
 [build-system]
-requires = [ "setuptools", "setuptools_scm" ]
+requires = ["setuptools>=64", "setuptools-scm>=8"]
 build-backend = "setuptools.build_meta"
 
 [project]
@@ -8,7 +8,7 @@ description = """
 This package is the Python QT tool code."""
 license = { text = "GPL" }
 classifiers = [ "Programming Language :: Python :: 3" ]
-urls = {documentation = "https://rubinobs.atlassian.net/secure/Dashboard.jspa", repository = "https://github.com/lsst-ts/ts_guitool" }
+urls = {documentation = "https://ts-guitool.lsst.io", repository = "https://github.com/lsst-ts/ts_guitool" }
 dynamic = [ "version" ]
 
 [tool.setuptools.dynamic]
