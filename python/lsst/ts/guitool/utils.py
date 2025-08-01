@@ -570,7 +570,7 @@ async def run_command(
             command(*args, **kwargs)  # type: ignore[operator]
     except Exception as error:
         await prompt_dialog_warning(
-            f"{command.__name__}()", str(error), is_prompted=is_prompted
+            f"{command.__name__}()", repr(error), is_prompted=is_prompted
         )
 
         return False
