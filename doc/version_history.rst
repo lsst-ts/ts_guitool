@@ -6,6 +6,18 @@
 Version History
 ##################
 
+.. towncrier release notes start
+
+0.3.0 (2025-08-06)
+===================
+
+New Features
+------------
+
+- Support the towncrier. (`OSW-274 <https://rubinobs.atlassian.net//browse/OSW-274>`_)
+- Improve the run_command() to use the repr() for the error message. (`OSW-806 <https://rubinobs.atlassian.net//browse/OSW-806>`_)
+
+
 .. _lsst.ts.guitool-0.2.7:
 
 -------------
