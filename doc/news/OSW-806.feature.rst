@@ -1,1 +1,0 @@
-Improve the run_command() to use the repr() for the error message.
