@@ -8,6 +8,16 @@ Version History
 
 .. towncrier release notes start
 
+v0.3.2 (2025-10-23)
+===================
+
+New Features
+------------
+
+- Reformat by ruff. (`OSW-1114 <https://rubinobs.atlassian.net//browse/OSW-1114>`_)
+- Adapt the qasync v0.28.0. (`OSW-1114 <https://rubinobs.atlassian.net//browse/OSW-1114>`_)
+
+
 v0.3.1 (2025-10-07)
 ===================
 
