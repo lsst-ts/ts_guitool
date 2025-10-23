@@ -60,9 +60,7 @@ class Gauge(QWidget):
         self.setMinimumSize(self.MIN_SIZE, self.MIN_SIZE)
         self.setMaximumWidth(2 * self.MIN_SIZE)
 
-    def set_magnitude_range(
-        self, magnitude_min: float | int, magnitude_max: float | int
-    ) -> None:
+    def set_magnitude_range(self, magnitude_min: float | int, magnitude_max: float | int) -> None:
         """Set the magnitude range. Color is mapped between magnitude_min and
         magnitude_max.
 

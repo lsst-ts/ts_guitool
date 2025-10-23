@@ -52,9 +52,10 @@ from pathlib import Path
 import qasync
 import yaml
 from PySide6 import QtWidgets
-from PySide6.QtCore import Qt
+from PySide6.QtCore import QCommandLineOption, QCommandLineParser, Qt
 from PySide6.QtGui import QAction, QPalette
 from PySide6.QtWidgets import (
+    QApplication,
     QDoubleSpinBox,
     QGridLayout,
     QGroupBox,
@@ -410,9 +411,7 @@ def create_group_box(name: str, layout: QtWidgets) -> QGroupBox:
     return group_box
 
 
-def create_table(
-    header_text: list[str], is_disabled_selection: bool = False
-) -> QTableWidget:
+def create_table(header_text: list[str], is_disabled_selection: bool = False) -> QTableWidget:
     """Create the table.
 
     Parameters
@@ -458,9 +457,7 @@ def get_tol(num_digit_after_decimal: int) -> float:
     return 10 ** -int(num_digit_after_decimal)
 
 
-async def __prompt_dialog(
-    title: str, description: str, icon: int, is_prompted: bool = True
-) -> None:
+async def __prompt_dialog(title: str, description: str, icon: int, is_prompted: bool = True) -> None:
     """Shows a warning dialog.
 
     The user must react to this dialog. The rest of the GUI is blocked until
@@ -492,9 +489,7 @@ async def __prompt_dialog(
         await dialog.show()
 
 
-async def prompt_dialog_critical(
-    title: str, description: str, is_prompted: bool = True
-) -> None:
+async def prompt_dialog_critical(title: str, description: str, is_prompted: bool = True) -> None:
     """Shows a critical dialog.
 
     The user must react to this dialog. The rest of the GUI is blocked until
@@ -513,9 +508,7 @@ async def prompt_dialog_critical(
     await __prompt_dialog(title, description, QMessageBoxAsync.Critical, is_prompted)
 
 
-async def prompt_dialog_warning(
-    title: str, description: str, is_prompted: bool = True
-) -> None:
+async def prompt_dialog_warning(title: str, description: str, is_prompted: bool = True) -> None:
     """Shows a warning dialog.
 
     The user must react to this dialog. The rest of the GUI is blocked until
@@ -569,9 +562,7 @@ async def run_command(
         else:
             command(*args, **kwargs)  # type: ignore[operator]
     except Exception as error:
-        await prompt_dialog_warning(
-            f"{command.__name__}()", repr(error), is_prompted=is_prompted
-        )
+        await prompt_dialog_warning(f"{command.__name__}()", repr(error), is_prompted=is_prompted)
 
         return False
 
@@ -619,11 +610,22 @@ def get_checked_buttons(buttons: list[QPushButton]) -> list[int]:
     return [idx for idx, button in enumerate(buttons) if button.isChecked()]
 
 
-def base_frame_run_application(main: typing.Coroutine) -> None:
+def base_frame_run_application(
+    name: str,
+    parser: QCommandLineParser,
+    options: list[QCommandLineOption],
+    main: typing.Coroutine,
+) -> None:
     """Base frame to run the application.
 
     Parameters
     ----------
+    name : `str`
+        Application name.
+    parser : `PySide6.QtCore.QCommandLineParser`
+        Command line parser.
+    options : `list` [`PySide6.QtCore.QCommandLineOption`]
+        Command line options.
     main : `asyncio.coroutine`
         Main application. This function should have an input argument to accept
         the command line arguments as a list.
@@ -633,25 +635,24 @@ def base_frame_run_application(main: typing.Coroutine) -> None:
         os.environ.setdefault("QT_API", "PySide6")
         print("qasync: QT_API not set, defaulting to PySide6.")
 
-    # Workaround the Python 3.11 issue in 'qasync' module based on:
-    # https://github.com/CabbageDevelopment/qasync/issues/68
-    if (sys.version_info.major == 3) and (sys.version_info.minor >= 11):
-        with qasync._set_event_loop_policy(qasync.DefaultQEventLoopPolicy()):
-            runner = asyncio.runners.Runner()
+    try:
+        # You need one (and only one) QApplication instance per application.
+        app = QApplication(sys.argv)
+        app.setApplicationName(name)
 
-            try:
-                runner.run(main(sys.argv))  # type: ignore[operator]
+        # The set of "aboutToQuit" comes from
+        # "qasync/examples/aiohttp_fetch.py"
+        app_close_event = asyncio.Event()
+        app.aboutToQuit.connect(app_close_event.set)
 
-            except asyncio.exceptions.CancelledError:
-                sys.exit(0)
+        parser.process(app)
 
-            finally:
-                runner.close()
-    else:
-        try:
-            qasync.run(main(sys.argv))  # type: ignore[operator]
-        except asyncio.exceptions.CancelledError:
-            sys.exit(0)
+        asyncio.run(
+            main(parser, options, app_close_event),  # type: ignore[operator]
+            loop_factory=qasync.QEventLoop,
+        )
+    except asyncio.exceptions.CancelledError:
+        sys.exit(0)
 
 
 def update_boolean_indicator_status(
@@ -692,9 +693,7 @@ def update_boolean_indicator_status(
     else:
         status_triggered = ButtonStatus.Normal
 
-    status_not_triggered = (
-        ButtonStatus.Error if is_default_error else ButtonStatus.Default
-    )
+    status_not_triggered = ButtonStatus.Error if is_default_error else ButtonStatus.Default
 
     status = status_triggered if is_triggered else status_not_triggered
     update_button_color(indicator, QPalette.Base, status)

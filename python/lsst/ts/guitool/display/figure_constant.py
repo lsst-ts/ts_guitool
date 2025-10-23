@@ -247,9 +247,7 @@ class FigureConstant(QtCharts.QChartView):
         # Check the number of input data
         num_x = len(list_x)
         if num_x > self._num_points:
-            raise ValueError(
-                f"Input x number(={num_x}) > available points (={self._num_points})."
-            )
+            raise ValueError(f"Input x number(={num_x}) > available points (={self._num_points}).")
 
         # Replace the points in series
         points = self.get_points(idx)
