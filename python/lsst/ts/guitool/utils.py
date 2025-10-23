@@ -411,9 +411,7 @@ def create_group_box(name: str, layout: QtWidgets) -> QGroupBox:
     return group_box
 
 
-def create_table(
-    header_text: list[str], is_disabled_selection: bool = False
-) -> QTableWidget:
+def create_table(header_text: list[str], is_disabled_selection: bool = False) -> QTableWidget:
     """Create the table.
 
     Parameters
@@ -459,9 +457,7 @@ def get_tol(num_digit_after_decimal: int) -> float:
     return 10 ** -int(num_digit_after_decimal)
 
 
-async def __prompt_dialog(
-    title: str, description: str, icon: int, is_prompted: bool = True
-) -> None:
+async def __prompt_dialog(title: str, description: str, icon: int, is_prompted: bool = True) -> None:
     """Shows a warning dialog.
 
     The user must react to this dialog. The rest of the GUI is blocked until
@@ -493,9 +489,7 @@ async def __prompt_dialog(
         await dialog.show()
 
 
-async def prompt_dialog_critical(
-    title: str, description: str, is_prompted: bool = True
-) -> None:
+async def prompt_dialog_critical(title: str, description: str, is_prompted: bool = True) -> None:
     """Shows a critical dialog.
 
     The user must react to this dialog. The rest of the GUI is blocked until
@@ -514,9 +508,7 @@ async def prompt_dialog_critical(
     await __prompt_dialog(title, description, QMessageBoxAsync.Critical, is_prompted)
 
 
-async def prompt_dialog_warning(
-    title: str, description: str, is_prompted: bool = True
-) -> None:
+async def prompt_dialog_warning(title: str, description: str, is_prompted: bool = True) -> None:
     """Shows a warning dialog.
 
     The user must react to this dialog. The rest of the GUI is blocked until
@@ -570,9 +562,7 @@ async def run_command(
         else:
             command(*args, **kwargs)  # type: ignore[operator]
     except Exception as error:
-        await prompt_dialog_warning(
-            f"{command.__name__}()", repr(error), is_prompted=is_prompted
-        )
+        await prompt_dialog_warning(f"{command.__name__}()", repr(error), is_prompted=is_prompted)
 
         return False
 
@@ -703,9 +693,7 @@ def update_boolean_indicator_status(
     else:
         status_triggered = ButtonStatus.Normal
 
-    status_not_triggered = (
-        ButtonStatus.Error if is_default_error else ButtonStatus.Default
-    )
+    status_not_triggered = ButtonStatus.Error if is_default_error else ButtonStatus.Default
 
     status = status_triggered if is_triggered else status_not_triggered
     update_button_color(indicator, QPalette.Base, status)

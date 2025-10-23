@@ -104,9 +104,7 @@ class TabTemplate(QDockWidget):
 
         return scroll_area
 
-    def create_and_start_timer(
-        self, callback_time_out: typing.Callable, duration: int
-    ) -> QTimer:
+    def create_and_start_timer(self, callback_time_out: typing.Callable, duration: int) -> QTimer:
         """Create and start the timer.
 
         Parameters

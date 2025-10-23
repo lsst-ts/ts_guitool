@@ -86,7 +86,6 @@ async def test_run_command(qtbot: QtBot) -> None:
 
 
 def test_update_button_color() -> None:
-
     button = QRadioButton()
 
     colors = [Qt.gray, Qt.green, Qt.red, Qt.yellow]
@@ -97,7 +96,6 @@ def test_update_button_color() -> None:
 
 
 def test_update_boolean_indicator_status() -> None:
-
     button = QRadioButton()
 
     # Error
