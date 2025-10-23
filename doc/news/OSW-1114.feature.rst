@@ -1,1 +1,0 @@
-Adapt the qasync v0.28.0.
