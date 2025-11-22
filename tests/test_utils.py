@@ -50,7 +50,7 @@ async def command_coroutine(is_failed: bool) -> None:
 
 
 def test_read_yaml_file_exception() -> None:
-    with pytest.raises(IOError):
+    with pytest.raises(FileNotFoundError):
         read_yaml_file("no_this_yaml_file.yaml")
 
 
