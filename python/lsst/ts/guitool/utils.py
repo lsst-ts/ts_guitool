@@ -80,23 +80,12 @@ def read_yaml_file(filepath: str | Path) -> dict:
 
     Returns
     -------
-    content : `dict`
+    `dict`
         File content.
-
-    Raises
-    ------
-    `IOError`
-        Cannot open the file.
     """
 
-    content = dict()
-    try:
-        with open(filepath, "r") as yaml_file:
-            content = yaml.safe_load(yaml_file)
-    except IOError:
-        raise IOError(f"Cannot open the yaml file: {filepath}.")
-
-    return content
+    with open(filepath, "r") as yaml_file:
+        return yaml.safe_load(yaml_file)
 
 
 def get_config_dir(
