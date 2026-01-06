@@ -20,9 +20,10 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import pytest
-from lsst.ts.guitool.widget import TabTemplate
 from PySide6.QtWidgets import QScrollArea, QWidget
 from pytestqt.qtbot import QtBot
+
+from lsst.ts.guitool.widget import TabTemplate
 
 
 @pytest.fixture

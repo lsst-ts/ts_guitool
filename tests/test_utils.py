@@ -22,6 +22,11 @@
 import asyncio
 
 import pytest
+from PySide6.QtCore import Qt
+from PySide6.QtGui import QPalette
+from PySide6.QtWidgets import QRadioButton
+from pytestqt.qtbot import QtBot
+
 from lsst.ts.guitool import (
     ButtonStatus,
     get_config_dir,
@@ -31,10 +36,6 @@ from lsst.ts.guitool import (
     update_boolean_indicator_status,
     update_button_color,
 )
-from PySide6.QtCore import Qt
-from PySide6.QtGui import QPalette
-from PySide6.QtWidgets import QRadioButton
-from pytestqt.qtbot import QtBot
 
 
 def command_normal(is_failed: bool) -> None:

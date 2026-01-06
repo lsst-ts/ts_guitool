@@ -22,10 +22,11 @@
 import asyncio
 
 import pytest
-from lsst.ts.guitool.widget import ControlTabs, TabTemplate
 from PySide6 import QtCore
 from PySide6.QtWidgets import QWidget
 from pytestqt.qtbot import QtBot
+
+from lsst.ts.guitool.widget import ControlTabs, TabTemplate
 
 names = ["Tab1", "Tab2", "Tab3"]
 

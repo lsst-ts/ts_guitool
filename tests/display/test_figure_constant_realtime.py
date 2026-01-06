@@ -20,8 +20,9 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import pytest
-from lsst.ts.guitool.display import FigureConstant
 from pytestqt.qtbot import QtBot
+
+from lsst.ts.guitool.display import FigureConstant
 
 
 @pytest.fixture
