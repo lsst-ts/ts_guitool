@@ -8,6 +8,17 @@ Version History
 
 .. towncrier release notes start
 
+v0.3.3 (2026-01-09)
+===================
+
+Other Changes and Additions
+---------------------------
+
+- Improve the read_yaml_file() in utils.py. (`OSW-907 <https://rubinobs.atlassian.net//browse/OSW-907>`_)
+- Fix the ruff format. (`OSW-1459 <https://rubinobs.atlassian.net//browse/OSW-1459>`_)
+- Support the documenteer.toml. (`OSW-1459 <https://rubinobs.atlassian.net//browse/OSW-1459>`_)
+
+
 v0.3.2 (2025-10-23)
 ===================
 
