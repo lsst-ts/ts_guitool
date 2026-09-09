@@ -42,6 +42,7 @@ __all__ = [
 ]
 
 import asyncio
+import inspect
 import os
 import sys
 import typing
@@ -122,12 +123,12 @@ def is_coroutine(function: typing.Any) -> bool:
     `bool`
         True if the function is a corountine. Otherwise, False.
     """
-    return asyncio.iscoroutine(function) or asyncio.iscoroutinefunction(function)
+    return asyncio.iscoroutine(function) or inspect.iscoroutinefunction(function)
 
 
 def set_button(
     name: str,
-    callback: typing.Callable | None,
+    callback: typing.Callable | typing.Coroutine | None,
     *args: typing.Any,
     is_checkable: bool = False,
     is_indicator: bool = False,
@@ -140,7 +141,7 @@ def set_button(
     ----------
     name : `str`
         Button name.
-    callback : `func` or None
+    callback : `func`, `coroutine` or None
         Callback function object to use in future partial calls. Put None
         if you do not want to have the callback function connected.
     *args : `args`
@@ -167,7 +168,10 @@ def set_button(
         button.setCheckable(is_checkable)
 
     if callback is not None:
-        button.clicked.connect(partial(callback, *args))
+        if is_coroutine(callback):
+            button.clicked.connect(lambda: asyncio.ensure_future(partial(callback, *args)()))  # type: ignore[arg-type, operator, misc]
+        else:
+            button.clicked.connect(partial(callback, *args))  # type: ignore[arg-type, operator, misc]
 
     if is_indicator:
         button.setEnabled(False)
