@@ -20,7 +20,4 @@
 # along with this program. If not, see <https://www.gnu.org/licenses/>.
 
 from .control_tabs import *
-from .q_file_dialog_async import *
-from .q_message_box_async import *
 from .tab_template import *
-from .tools import *

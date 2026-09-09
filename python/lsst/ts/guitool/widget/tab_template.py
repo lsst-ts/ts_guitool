@@ -21,6 +21,7 @@
 
 __all__ = ["TabTemplate"]
 
+import asyncio
 import types
 import typing
 
@@ -39,6 +40,12 @@ class TabTemplate(QDockWidget):
 
     def __init__(self, title: str) -> None:
         super().__init__()
+
+        # Keep track of all the asynchronous tasks that are running from
+        # self.run_async_task(). This is important to avoid the tasks being
+        # garbage collected before they finish, which would cause them to be
+        # cancelled.
+        self._async_tasks: set[asyncio.Task] = set()
 
         self.setWindowTitle(title)
         self.setWidget(QWidget())
@@ -143,6 +150,40 @@ class TabTemplate(QDockWidget):
 
         if timer.interval() != duration:
             timer.start(duration)
+
+    def run_async_task(
+        self,
+        coroutine: typing.Coroutine,
+        *args: typing.Any,
+        **kwargs: dict[str, typing.Any],
+    ) -> None:
+        """Run the asynchronous task.
+
+        Notes
+        -----
+        For each new task, a strong reference is kept in the set of tasks. The
+        task will be automatically removed from the set of tasks when it is
+        done.
+
+        Parameters
+        ----------
+        coroutine : `typing.Coroutine`
+            Coroutine to execute.
+        *args : `args`
+            Arguments of the coroutine.
+        **kwargs : `dict`, optional
+            Additional keyword arguments to run the coroutine.
+        """
+
+        task = asyncio.create_task(coroutine(*args, **kwargs))  # type: ignore[operator]
+
+        # Add task to the set. This creates a strong reference.
+        self._async_tasks.add(task)
+
+        # To prevent keeping references to finished tasks forever,
+        # make each task remove its own reference from the set after
+        # completion:
+        task.add_done_callback(self._async_tasks.discard)  # type: ignore[attr-defined]
 
     async def __aenter__(self) -> QDockWidget:
         """This is an overridden function to support the asynchronous context

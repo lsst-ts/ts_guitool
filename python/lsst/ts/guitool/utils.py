@@ -49,9 +49,8 @@ from functools import partial
 from os import getenv
 from pathlib import Path
 
-import qasync
 import yaml
-from PySide6 import QtWidgets
+from PySide6 import QtAsyncio, QtWidgets
 from PySide6.QtCore import QCommandLineOption, QCommandLineParser, Qt
 from PySide6.QtGui import QAction, QPalette
 from PySide6.QtWidgets import (
@@ -60,6 +59,7 @@ from PySide6.QtWidgets import (
     QGridLayout,
     QGroupBox,
     QLabel,
+    QMessageBox,
     QPushButton,
     QRadioButton,
     QTableWidget,
@@ -67,7 +67,6 @@ from PySide6.QtWidgets import (
 )
 
 from .enums import ButtonStatus
-from .widget import QMessageBoxAsync
 
 
 def read_yaml_file(filepath: str | Path) -> dict:
@@ -446,7 +445,7 @@ def get_tol(num_digit_after_decimal: int) -> float:
     return 10 ** -int(num_digit_after_decimal)
 
 
-async def __prompt_dialog(title: str, description: str, icon: int, is_prompted: bool = True) -> None:
+def __prompt_dialog(title: str, description: str, icon: int, is_prompted: bool = True) -> None:
     """Shows a warning dialog.
 
     The user must react to this dialog. The rest of the GUI is blocked until
@@ -466,7 +465,7 @@ async def __prompt_dialog(title: str, description: str, icon: int, is_prompted: 
         shall not be the case when used in the real GUI. (the default is True)
     """
 
-    dialog = QMessageBoxAsync()
+    dialog = QMessageBox()
     dialog.setIcon(icon)
     dialog.setWindowTitle(title)
     dialog.setText(description)
@@ -475,10 +474,10 @@ async def __prompt_dialog(title: str, description: str, icon: int, is_prompted: 
     dialog.setModal(True)
 
     if is_prompted:
-        await dialog.show()
+        dialog.exec()
 
 
-async def prompt_dialog_critical(title: str, description: str, is_prompted: bool = True) -> None:
+def prompt_dialog_critical(title: str, description: str, is_prompted: bool = True) -> None:
     """Shows a critical dialog.
 
     The user must react to this dialog. The rest of the GUI is blocked until
@@ -494,10 +493,10 @@ async def prompt_dialog_critical(title: str, description: str, is_prompted: bool
         When False, dialog will not be executed. That is used for tests, which
         shall not be the case when used in the real GUI. (the default is True)
     """
-    await __prompt_dialog(title, description, QMessageBoxAsync.Critical, is_prompted)
+    __prompt_dialog(title, description, QMessageBox.Critical, is_prompted)
 
 
-async def prompt_dialog_warning(title: str, description: str, is_prompted: bool = True) -> None:
+def prompt_dialog_warning(title: str, description: str, is_prompted: bool = True) -> None:
     """Shows a warning dialog.
 
     The user must react to this dialog. The rest of the GUI is blocked until
@@ -513,7 +512,7 @@ async def prompt_dialog_warning(title: str, description: str, is_prompted: bool 
         When False, dialog will not be executed. That is used for tests, which
         shall not be the case when used in the real GUI. (the default is True)
     """
-    await __prompt_dialog(title, description, QMessageBoxAsync.Warning, is_prompted)
+    __prompt_dialog(title, description, QMessageBox.Warning, is_prompted)
 
 
 async def run_command(
@@ -551,7 +550,7 @@ async def run_command(
         else:
             command(*args, **kwargs)  # type: ignore[operator]
     except Exception as error:
-        await prompt_dialog_warning(f"{command.__name__}()", repr(error), is_prompted=is_prompted)
+        prompt_dialog_warning(f"{command.__name__}()", repr(error), is_prompted=is_prompted)
 
         return False
 
@@ -603,7 +602,7 @@ def base_frame_run_application(
     name: str,
     parser: QCommandLineParser,
     options: list[QCommandLineOption],
-    main: typing.Coroutine,
+    main: typing.Callable,
 ) -> None:
     """Base frame to run the application.
 
@@ -622,24 +621,17 @@ def base_frame_run_application(
 
     if "QT_API" not in os.environ:
         os.environ.setdefault("QT_API", "PySide6")
-        print("qasync: QT_API not set, defaulting to PySide6.")
+        print("QT_API not set, defaulting to PySide6.")
 
     try:
         # You need one (and only one) QApplication instance per application.
         app = QApplication(sys.argv)
         app.setApplicationName(name)
 
-        # The set of "aboutToQuit" comes from
-        # "qasync/examples/aiohttp_fetch.py"
-        app_close_event = asyncio.Event()
-        app.aboutToQuit.connect(app_close_event.set)
-
         parser.process(app)
+        main(parser, options)
 
-        asyncio.run(
-            main(parser, options, app_close_event),  # type: ignore[operator]
-            loop_factory=qasync.QEventLoop,
-        )
+        QtAsyncio.run(handle_sigint=True)
     except asyncio.exceptions.CancelledError:
         sys.exit(0)
 

@@ -34,10 +34,6 @@ Class
 * **QMessageBoxAsync** is an asynchronous wrapper for the `QMessageBox <https://doc.qt.io/qtforpython-5/PySide2/QtWidgets/QMessageBox.html>`_. 
 * **QFileDialogAsync** is an asynchronous wrapper for the `QFileDialog <https://doc.qt.io/qtforpython-5/PySide2/QtWidgets/QFileDialog.html>`_.
 
-As the standard methods (such as `QDialog exec <https://doc.qt.io/qt-6/qdialog.html#exec>`_) provided by the **PySide6/QtWidgets** library aren't asynchronous (they are synchronous, forcing UI to wait for user action before redrawing UI content) and may spin an additional event loop when called, an asynchronous child is provided.
-That makes the `qasync <https://github.com/CabbageDevelopment/qasync>`_ library and its event loop switching trick perform as expected.
-Without those wrappers, the UI will be running for the duration of the method call synchronously, not waking up the `asynchronous tasks <https://docs.python.org/3/library/asyncio-task.html#task-object>`_ to react to incoming messages and redrawing widget content.
-
 .. _API:
 
 APIs

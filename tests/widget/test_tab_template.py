@@ -19,6 +19,8 @@
 # You should have received a copy of the GNU General Public License
 # along with this program. If not, see <https://www.gnu.org/licenses/>.
 
+import asyncio
+
 import pytest
 from PySide6.QtWidgets import QScrollArea, QWidget
 from pytestqt.qtbot import QtBot
@@ -67,3 +69,18 @@ def test_check_duration_and_restart_timer(widget: TabTemplate) -> None:
 
     assert timer.interval() == duration
     assert timer.isActive() is True
+
+
+@pytest.mark.asyncio
+async def test_run_async_task(widget: TabTemplate) -> None:
+    widget.run_async_task(async_sleep_task, 3)
+
+    assert len(widget._async_tasks) == 1
+
+    await asyncio.sleep(6)
+
+    assert len(widget._async_tasks) == 0
+
+
+async def async_sleep_task(sleep_time: int | float) -> None:
+    await asyncio.sleep(sleep_time)
